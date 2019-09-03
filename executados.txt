@@ -1,0 +1,5 @@
+npm i -D eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
+npm i styled-components
+
+- criei o .editorconfig:
+- criei o .eslintrc.json:

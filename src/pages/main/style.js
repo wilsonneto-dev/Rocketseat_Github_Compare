@@ -20,10 +20,13 @@ const MainStyled = styled.div`
       border: 0;
       color: #444;
       border-radius: 3px;
+
+      border: ${props => (props.withError ? '2px solid #f00' : 0)};
     }
 
     button {
       height: 55px;
+      width: 80px;
       padding: 0 20px;
       margin-left: 10px;
       background: #63f5b0;

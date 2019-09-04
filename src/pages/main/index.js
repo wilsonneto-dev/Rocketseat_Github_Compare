@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import moment from 'moment';
+
 import CompareList from '../../components/CompareList/index';
 import api from '../../services/api';
-import moment from 'moment';
+
 import MainStyled from './style';
 import logo from '../../assets/logo.png';
 
@@ -10,7 +12,9 @@ export default class Main extends Component {
     super();
     this.state = {
       repositories: [],
-      repositoryInput: ''
+      repositoryInput: '',
+      repositoryError: false,
+      loading: false
     };
   }
 
@@ -19,25 +23,29 @@ export default class Main extends Component {
     const { repositories } = this.state;
     const { repositoryInput } = this.state;
 
+    this.setState({ loading: true });
+
     try {
       const { data: repository } = await api.get(`/repos/${repositoryInput}`);
 
       repository.lastCommit = moment(repository.pushed_at).fromNow();
 
       const newRepositories = [...repositories, repository];
-      this.setState({ repositories: newRepositories });
-      console.log(this.repositories);
+      this.setState({ repositories: newRepositories, repositoryError: false });
     } catch (err) {
-      console.log(err);
+      this.setState({ repositoryError: true });
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
   render() {
     const { repositories } = this.state;
     const { repositoryInput } = this.state;
+    const { repositoryError } = this.state;
 
     return (
-      <MainStyled>
+      <MainStyled withError={repositoryError}>
         <img width="100" src={logo} alt="Github compare" />
         <form onSubmit={this.handleAddRepository}>
           <input
@@ -46,7 +54,13 @@ export default class Main extends Component {
             value={repositoryInput}
             onChange={e => this.setState({ repositoryInput: e.target.value })}
           />
-          <button type="submit">OK</button>
+          <button type="submit">
+            {this.state.loading ? (
+              <i className="fa fa-spinner fa-pulse" />
+            ) : (
+              'OK'
+            )}
+          </button>
         </form>
         <CompareList repositories={repositories} />
       </MainStyled>
